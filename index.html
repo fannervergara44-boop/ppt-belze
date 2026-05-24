@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Piedra · Papel · Tijera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- SCREEN: SETUP -->
+<div id="s-setup" class="screen active">
+  <div class="hero-title">✊✋✌️</div>
+  <h1>Piedra<br>Papel<br>Tijera</h1>
+
+  <div class="card">
+    <label class="field-label">Modo de juego</label>
+    <div class="mode-grid" id="mode-grid">
+      <button class="mode-btn active" data-mode="1v1ai">1 vs IA</button>
+      <button class="mode-btn" data-mode="1v1">1 vs 1</button>
+      <button class="mode-btn" data-mode="1v1v1">1 vs 1 vs 1</button>
+    </div>
+
+    <div class="fields" id="fields">
+      <label class="field-label">Jugador 1</label>
+      <input type="text" id="p1name" placeholder="Tu nombre" />
+      <div id="p2-block">
+        <label class="field-label">Jugador 2</label>
+        <input type="text" id="p2name" placeholder="Nombre jugador 2" />
+      </div>
+      <div id="p3-block" style="display:none">
+        <label class="field-label">Jugador 3</label>
+        <input type="text" id="p3name" placeholder="Nombre jugador 3" />
+      </div>
+      <label class="field-label" style="margin-top:1rem">Rondas</label>
+      <div class="mode-grid">
+        <button class="round-btn" data-r="3">3</button>
+        <button class="round-btn active" data-r="5">5</button>
+        <button class="round-btn" data-r="7">7</button>
+        <button class="round-btn" data-r="10">10</button>
+      </div>
+    </div>
+
+    <button class="cta" id="btn-start">Comenzar</button>
+  </div>
+</div>
+
+<!-- SCREEN: GAME -->
+<div id="s-game" class="screen">
+  <div class="top-bar">
+    <div class="round-badge" id="round-badge">Ronda 1/5</div>
+  </div>
+  <div class="scoreboard" id="scoreboard"></div>
+  <div class="turn-banner" id="turn-banner"></div>
+  <div class="secret-msg" id="secret-msg"></div>
+
+  <div class="hands-zone" id="hands-zone">
+    <button class="hand-btn" data-pick="piedra">✊<span>Piedra</span></button>
+    <button class="hand-btn" data-pick="papel">✋<span>Papel</span></button>
+    <button class="hand-btn" data-pick="tijera">✌️<span>Tijera</span></button>
+  </div>
+
+  <div class="result-panel" id="result-panel" style="display:none">
+    <div class="reveal-row" id="reveal-row"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <button class="cta" id="btn-next">Siguiente ronda →</button>
+  </div>
+
+  <div class="history-box">
+    <div class="history-title">Historial</div>
+    <div id="history-list"><span class="empty-hist">Sin rondas jugadas aún</span></div>
+  </div>
+</div>
+
+<!-- SCREEN: END -->
+<div id="s-end" class="screen">
+  <div class="end-icon" id="end-icon">🏆</div>
+  <h2 id="champ-text"></h2>
+  <div class="final-scores" id="final-scores"></div>
+  <div class="history-box" id="end-history"></div>
+  <button class="cta" id="btn-restart">Jugar de nuevo</button>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PPT — Maldición de Geto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════ SCREEN: WELCOME ══════════ -->
+<div id="s-welcome" class="screen active" style="display:flex">
+  <div class="welcome-sigil">☯</div>
+  <div class="welcome-title">PPT</div>
+  <div class="welcome-sub">Piedra · Papel · Tijera</div>
+
+  <div class="welcome-card">
+    <label>Nombre del jugador</label>
+    <input
+      class="welcome-input"
+      id="welcome-name"
+      type="text"
+      placeholder="Tu nombre..."
+      maxlength="18"
+      autocomplete="off"
+    />
+    <button class="welcome-cta" onclick="enterLobby()">INVOCAR</button>
+  </div>
+
+  <div class="curse-marks">⛧ &nbsp; 呪 &nbsp; ⛧</div>
+</div>
+
+<!-- ══════════ HISTORY MODAL ══════════ -->
+<div class="hm-overlay" id="history-modal" onclick="if(event.target===this)closeHistory()">
+  <div class="hm-box">
+    <div class="hm-header">
+      <span class="hm-title">☯ Historial</span>
+      <button class="hm-close" onclick="closeHistory()">✕</button>
+    </div>
+    <div id="hm-body"></div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: LOBBY ══════════ -->
+<div id="s-lobby" class="screen">
+  <div class="hero-title">✊✋✌️</div>
+  <h1>PPT<br>Online</h1>
+  <div class="player-greeting" id="lobby-greeting">— <span id="greeting-name"></span> —</div>
+  <span class="badge-online">⛧ Multijugador en línea</span>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" data-tab="create" onclick="switchTab('create')">Crear sala</button>
+      <button class="tab"        data-tab="join"   onclick="switchTab('join')">Unirse</button>
+      <button class="tab"        data-tab="ia"     onclick="switchTab('ia')">vs IA 🤖</button>
+    </div>
+
+    <!-- TAB CREAR -->
+    <div class="tab-content active" id="tab-create">
+      <label class="field-label">Tu nombre</label>
+      <input type="text" id="create-name" placeholder="Tu nombre" />
+      <label class="field-label">Jugadores en la sala</label>
+      <div class="mode-grid">
+        <button class="round-btn active" data-max="2">2 jugadores</button>
+        <button class="round-btn"        data-max="3">3 jugadores</button>
+      </div>
+      <label class="field-label" style="margin-top:.75rem">Rondas</label>
+      <div class="mode-grid">
+        <button class="round-btn"        data-r="3">3</button>
+        <button class="round-btn active" data-r="5">5</button>
+        <button class="round-btn"        data-r="7">7</button>
+        <button class="round-btn"        data-r="10">10</button>
+      </div>
+      <button class="cta" onclick="createRoom()">Crear sala</button>
+    </div>
+
+    <!-- TAB UNIRSE -->
+    <div class="tab-content" id="tab-join">
+      <label class="field-label">Tu nombre</label>
+      <input type="text" id="join-name" placeholder="Tu nombre" />
+      <label class="field-label">Código de sala</label>
+      <input type="text" id="join-code" placeholder="Ej: ABC123"
+             style="text-transform:uppercase;letter-spacing:4px;font-size:18px;" maxlength="6" />
+      <button class="cta" onclick="joinRoom()">Unirse</button>
+    </div>
+
+    <!-- TAB VS IA -->
+    <div class="tab-content" id="tab-ia">
+      <span class="ia-badge">🤖 Inteligencia Artificial</span>
+      <label class="field-label">Tu nombre</label>
+      <input type="text" id="ia-name" placeholder="Tu nombre" />
+      <label class="field-label" style="margin-top:.75rem">Rondas</label>
+      <div class="mode-grid">
+        <button class="round-btn"        data-ria="3">3</button>
+        <button class="round-btn active" data-ria="5">5</button>
+        <button class="round-btn"        data-ria="7">7</button>
+        <button class="round-btn"        data-ria="10">10</button>
+      </div>
+      <button class="cta" onclick="startVsIA()">Jugar contra la IA</button>
+    </div>
+
+    <div class="error-msg" id="lobby-error"></div>
+    <button class="hist-btn" onclick="openHistory()">☯ Ver historial de partidas</button>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: WAITING ══════════ -->
+<div id="s-waiting" class="screen">
+  <h1>Sala<br>creada</h1>
+  <div class="card">
+    <label class="field-label">Código para compartir</label>
+    <div class="lobby-code" id="room-code-display">------</div>
+    <p style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:1.25rem">Comparte este código con tus invocadores</p>
+    <label class="field-label">Jugadores conectados</label>
+    <ul class="player-list" id="waiting-players"></ul>
+    <p style="font-size:13px;color:var(--muted);margin-top:1rem;text-align:center">Esperando jugadores<span class="waiting-dots"></span></p>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: GAME ══════════ -->
+<div id="s-game" class="screen">
+  <div class="top-bar">
+    <div class="round-badge" id="round-badge">Ronda 1/5</div>
+  </div>
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <div class="timer-wrap">
+    <span class="timer-label">⛧ seg</span>
+    <div id="timer-display"></div>
+  </div>
+
+  <div class="turn-banner" id="turn-banner" style="display:none">Elige tu mano</div>
+
+  <div class="hands-zone" id="hands-zone">
+    <button class="hand-btn" data-pick="piedra">✊<span>Piedra</span></button>
+    <button class="hand-btn" data-pick="papel">✋<span>Papel</span></button>
+    <button class="hand-btn" data-pick="tijera">✌️<span>Tijera</span></button>
+  </div>
+  <div class="pick-waiting" id="pick-waiting"></div>
+
+  <div class="result-panel" id="result-panel" style="display:none">
+    <div class="reveal-row" id="reveal-row"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <button class="cta" id="btn-next">Siguiente ronda →</button>
+  </div>
+
+  <div class="history-box">
+    <div class="history-title">☯ Historial de rondas</div>
+    <div id="history-list"><span class="empty-hist">Sin rondas jugadas aún</span></div>
+  </div>
+</div>
+
+<!-- ══════════ SCREEN: END ══════════ -->
+<div id="s-end" class="screen">
+  <div class="end-icon" id="end-icon">🏆</div>
+  <h2 id="champ-text"></h2>
+  <div class="final-scores" id="final-scores"></div>
+
+  <button class="cta" id="btn-replay-ia" style="display:none;margin-bottom:.75rem"
+          onclick="startVsIA()">🔄 Revancha vs IA</button>
+
+  <button class="cta" id="btn-replay-online" style="display:none"
+          onclick="revanchaOnline()">🔄 Nueva sala (mismo nombre)</button>
+
+  <button class="cta" onclick="showScreen('s-lobby')" style="margin-top:.5rem">Volver al inicio</button>
+  <button class="hist-btn" onclick="openHistory()" style="margin-top:.5rem">☯ Ver historial</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="game.js"></script>
+<script>
+// ── WELCOME SCREEN LOGIC ──
+function enterLobby() {
+  const nameInput = document.getElementById('welcome-name');
+  const name = nameInput.value.trim();
+  if (!name) {
+    nameInput.style.borderColor = 'var(--lose)';
+    nameInput.style.boxShadow = '0 0 0 3px rgba(220,38,38,.2)';
+    nameInput.placeholder = 'Escribe tu nombre...';
+    nameInput.focus();
+    setTimeout(() => {
+      nameInput.style.borderColor = '';
+      nameInput.style.boxShadow = '';
+    }, 1500);
+    return;
+  }
+
+  // Pre-fill all name inputs in the lobby
+  document.getElementById('create-name').value = name;
+  document.getElementById('join-name').value   = name;
+  document.getElementById('ia-name').value     = name;
+
+  // Update greeting
+  document.getElementById('greeting-name').textContent = name;
+
+  // Transition to lobby
+  const welcomeScreen = document.getElementById('s-welcome');
+  welcomeScreen.style.transition = 'opacity .4s ease, transform .4s ease';
+  welcomeScreen.style.opacity = '0';
+  welcomeScreen.style.transform = 'translateY(-20px)';
+  setTimeout(() => {
+    showScreen('s-lobby');
+  }, 380);
+}
+
+// Allow Enter key on welcome screen
+document.getElementById('welcome-name').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') enterLobby();
+});
+
+// Override showScreen to handle the welcome screen display style
+const _origShowScreen = typeof showScreen === 'function' ? showScreen : null;
+</script>
+</body>
+</html>
